@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo.mapper.YonghuMapper">
+    <resultMap id="Self" type="Yonghu">
+        <id column="id" property="id"/>
+        <result column="addtime" property="addtime"/>
+        <result column="yonghuming" property="yonghuming"/>
+        <result column="xingming" property="xingming"/>
+        <result column="xingbie" property="xingbie"/>
+        <result column="dianhua" property="dianhua"/>
+        <result column="youxiang" property="youxiang"/>
+        <collection property="xuelixinxi" ofType="Xuelixinxi">
+            <result column="addtime" property="addtime"/>
+            <result column="xueli" property="xueli"/>
+        </collection>
+        <collection property="messagesList" ofType="Messages">
+            <id column="m.id" property="id"/>
+            <result column="addtime" property="addtime"/>
+            <result column="content" property="content"/>
+        </collection>
+    </resultMap>
+    <!-- 赋予注册用户visitor权限 -->
+    <insert id="registerRole">
+        insert into yonghu_role(yonghu_id, role_id)
+        VALUES (#{yonghuId}, 4);
+    </insert>
+
+    <insert id="setAdmin" >
+        insert into yonghu_role(yonghu_id, role_id) VALUES (#{id},1);
+    </insert>
+
+    <select id="selectAll" resultMap="Self">
+        select yonghu.id,
+               yonghu.addtime,
+               yonghuming,
+               xingming,
+               mima,
+               xingbie,
+               dianhua,
+               youxiang,
+               x.addtime,
+               xueli,
+               m.id,
+               m.addtime,
+               content
+        from yonghu
+                 left join xuelixinxi x on yonghu.id = x.id
+                 left join messages m on yonghu.id = m.userid
+        where yonghu.del=0;
+    </select>
+
+    <select id="findByYonghuming" resultType="Yonghu">
+        select *
+        from yonghu
+        where yonghuming = #{yonghuming} and yonghu.del=0;
+    </select>
+
+    <!-- 获得角色信息 -->
+    <select id="getRole" resultType="String">
+        select r.role_name
+        from yonghu
+                 left join yonghu_role yr on yonghu.id = yr.yonghu_id
+                 left join role r on r.id = yr.role_id
+        where yonghu.id = #{id} and yonghu.del=0;
+    </select>
+
+    <select id="getPermission" resultType="String">
+        select p.permissions_name from role
+            left join role_permissions rp on role.id = rp.role_id
+            left join yonghu_role yr on role.id = yr.role_id
+            left join permissions p on p.id = rp.permissions_id
+        where yr.yonghu_id=#{id};
+    </select>
+
+    <select id="selectSelf" resultMap="Self">
+        select yonghu.id,
+               yonghu.addtime,
+               yonghuming,
+               xingming,
+               mima,
+               xingbie,
+               dianhua,
+               youxiang,
+               x.addtime,
+               xueli,
+               m.id,
+               m.addtime,
+               content
+        from yonghu
+                 left join xuelixinxi x on yonghu.id = x.id
+                 left join messages m on yonghu.id = m.userid
+        where yonghu.id = #{yonghuId} and yonghu.del=0 ;
+    </select>
+
+
+
+    <select id="selectWithYonghuming" resultType="Yonghu">
+        select id, addtime, yonghuming, xingming,xingbie from yonghu where yonghuming like concat('%',#{yonghuming},'%')
+    </select>
+
+</mapper>

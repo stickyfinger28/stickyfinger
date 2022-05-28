@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo.mapper.DiscussqiuzhizhexinxiMapper">
+
+    <resultMap id="discussqiuzhizhexinxiList" type="Qiuzhizhexinxi">
+        <id column="id" property="id"/>
+        <result column="yonghuming" property="yonghuming"/>
+        <result column="gangweileibie" property="gangweileibie"/>
+        <collection property="discussqiuzhizhexinxiList" ofType="Discussqiuzhizhexinxi">
+            <id column="d_id" property="d_id"/>
+            <result column="content" property="content"/>
+            <result column="addtime" property="addtime"/>
+            <result column="refid" property="refid"/>
+            <result column="userid" property="userid"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectSelf" resultMap="discussqiuzhizhexinxiList">
+        SELECT q.`id`, q.yonghuming,q.gangweileibie,d_id, d.content,d.addtime,d.refid,d.userid
+        FROM qiuzhizhexinxi q
+                 LEFT JOIN discussqiuzhizhexinxi d ON q.`id` = d.`refid`
+        WHERE d.`userid` = #{yonghuId}
+    </select>
+
+    <select id="select" resultMap="discussqiuzhizhexinxiList">
+        SELECT q.`id`, q.yonghuming,q.gangweileibie,d_id, d.content,d.addtime,d.refid,d.userid
+        FROM qiuzhizhexinxi q
+                 LEFT JOIN discussqiuzhizhexinxi d ON q.`id` = d.`refid`
+        WHERE d.refid = #{r_id};
+    </select>
+
+    <select id="check" resultMap="discussqiuzhizhexinxiList">
+        SELECT q.`id`
+        FROM qiuzhizhexinxi q
+                 LEFT JOIN discussqiuzhizhexinxi d ON q.`id` = d.`refid`
+        WHERE d.`userid` = #{yonghuId} and d_id=#{id};
+    </select>
+</mapper>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo.mapper.YingpinxinxiMapper">
+
+    <select id="select" resultType="Yingpinxinxi">
+        SELECT yp.id,yp.addtime,yp.qiyebianhao,
+               yp.qiyemingcheng,yp.fuzeren,
+               yp.`yonghuming`,yp.`xingming`,
+               yp.zhaopingangwei,yp.dianhua,yp.jianli,
+               yp.`sfsh`,yp.`shhf`
+        FROM yingpinxinxi yp
+                 LEFT JOIN qiyexinxi q ON q.qiyebianhao = yp.qiyebianhao
+                 LEFT JOIN yonghu Y ON Y.id = q.userid
+                 LEFT JOIN zhaopinxinxi z ON q.qiyebianhao = z.qiyebianhao
+        WHERE userid = #{id} AND z.`zhaopingangwei`=yp.`zhaopingangwei` AND yp.del=0;
+    </select>
+
+
+    <select id="check" resultType="Yingpinxinxi">
+        SELECT yp.id
+        FROM yingpinxinxi yp
+                 LEFT JOIN qiyexinxi q ON q.qiyebianhao = yp.qiyebianhao
+                 LEFT JOIN yonghu Y ON Y.id = q.userid
+                 LEFT JOIN zhaopinxinxi z ON q.qiyebianhao = z.qiyebianhao
+        WHERE yp.id = #{id} AND z.`zhaopingangwei`=yp.`zhaopingangwei` AND
+              yp.yonghuming=#{yonghuming} and yp.del=0;
+    </select>
+
+    <select id="checkSH" resultType="Yingpinxinxi">
+        SELECT yp.id
+        FROM yingpinxinxi yp
+                 LEFT JOIN qiyexinxi q ON q.qiyebianhao = yp.qiyebianhao
+                 LEFT JOIN yonghu Y ON Y.id = q.userid
+                 LEFT JOIN zhaopinxinxi z ON q.qiyebianhao = z.qiyebianhao
+        WHERE userid = #{yonghuId} AND z.`zhaopingangwei`=yp.`zhaopingangwei`
+          AND yp.id=#{id} AND yp.del=0;
+    </select>
+
+    <update id="updateByQiyexinxi" parameterType="LQiyexinxi">
+        update yingpinxinxi
+        <set>
+            <if test="qiyemingcheng !=null">qiyemingcheng=#{qiyemingcheng},</if>
+            <if test="fuzeren !=null">fuzeren=#{fuzeren},</if>
+            <if test="lianxidianhua !=null">lianxidianhua=#{lianxidianhua},</if>
+        </set>
+        where qiyebianhao=#{qiyebianhao}
+    </update>
+
+    <update id="updateByYonghu" parameterType="Yonghu">
+        update yingpinxinxi
+        <set>
+            <if test="dianhua !=null">dianhua=#{dianhua},</if>
+            <if test="xingming !=null">xingming=#{xingming},</if>
+        </set>
+        where yonghuming=#{yonghuming};
+    </update>
+
+    <update id="updateSelf" parameterType="LYingpinxinxi">
+        update yingpinxinxi
+        <set>
+            <if test="zhaopingangwei !=null">zhaopingangwei=#{zhaopingangwei},</if>
+            <if test="jianli !=null">jianli=#{jianli},</if>
+        </set>
+            where id=#{id};
+    </update>
+
+    <update id="updateBySH" parameterType="SYingpinxinxi">
+        update yingpinxinxi
+            <set>
+                <if test="shhf !=null">shhf=#{shhf},</if>
+                sfsh="是",
+            </set>
+        where id=#{id};
+    </update>
+
+
+</mapper>

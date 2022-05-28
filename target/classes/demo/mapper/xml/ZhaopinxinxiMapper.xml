@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo.mapper.ZhaopinxinxiMapper">
+    <resultMap id="Zhaopinxinxi" type="Zhaopinxinxi">
+        <id column="id" property="id"/>
+        <result column="lianxidianhua" property="lianxidianhua"/>
+        <result column="zhaopingangwei" property="zhaopingangwei"/>
+        <result column="gangweileibie" property="gangweileibie"/>
+        <result column="zhaopinrenshu" property="zhaopinrenshu"/>
+        <result column="xueli" property="xueli"/>
+        <result column="tupian" property="tupian"/>
+        <result column="gangweiyaoqiu" property="gangweiyaoqiu"/>
+        <result column="gongzuozhize" property="gongzuozhize"/>
+        <result column="thumbsupnum" property="thumbsupnum"/>
+        <result column="crazilynum" property="crazilynum"/>
+        <result column="qiyebianhao" property="qiyebianhao"/>
+        <result column="qiyemingcheng" property="qiyemingcheng"/>
+        <result column="fuzeren" property="fuzeren"/>
+        <collection property="discusszhaopinxinxiList" ofType="Discusszhaopinxinxi">
+            <id column="d_id" property="d_id"/>
+            <result column="addtime" property="addtime"/>
+            <result column="content" property="content"/>
+            <result column="userid" property="userid"/>
+            <result column="refid" property="refid"/>
+        </collection>
+    </resultMap>
+
+    <select id="select" resultMap="Zhaopinxinxi">
+        select z.id,z.lianxidianhua,z.zhaopingangwei,z.gangweileibie,zhaopinrenshu,z.xueli,z.tupian,
+               z.gangweiyaoqiu,z.gongzuozhize,z.thumbsupnum,z.crazilynum,z.qiyebianhao,z.qiyemingcheng,z.fuzeren,
+               d.d_id,d.addtime,d.content,d.userid,d.refid
+        from zhaopinxinxi z
+                 left join qiyexinxi q on q.qiyebianhao = z.qiyebianhao
+                 left join discusszhaopinxinxi d on z.id = d.refid
+    where z.del=0;
+    </select>
+
+    <select id="selectSelf" resultMap="Zhaopinxinxi">
+        select z.id,z.lianxidianhua,z.zhaopingangwei,z.gangweileibie,zhaopinrenshu,z.xueli,z.tupian,
+               z.gangweiyaoqiu,z.gongzuozhize,z.thumbsupnum,z.crazilynum,z.qiyebianhao,z.qiyemingcheng,z.fuzeren,
+               d.d_id,d.addtime,d.content,d.userid,d.refid
+        from zhaopinxinxi z
+                 left join qiyexinxi q on q.qiyebianhao = z.qiyebianhao
+                 left join discusszhaopinxinxi d on z.id = d.refid
+        where q.userid=#{boosId} and z.del=0;
+    </select>
+
+    <select id="check" resultMap="Zhaopinxinxi">
+        select z.id
+        from zhaopinxinxi z
+                 left join qiyexinxi q on q.qiyebianhao = z.qiyebianhao
+                 left join discusszhaopinxinxi d on z.id = d.refid
+        where q.userid=#{yonghuId} and z.id=#{zhaopinxinxiId}  and z.del=0;
+    </select>
+
+    <update id="updateByQiyexinxi" parameterType="LQiyexinxi">
+        update zhaopinxinxi z
+            <set>
+                <if test="qiyemingcheng !=null">qiyemingcheng=#{qiyemingcheng},</if>
+                <if test="fuzeren !=null">fuzeren=#{fuzeren},</if>
+                <if test="lianxidianhua !=null">lianxidianhua=#{lianxidianhua},</if>
+            </set>
+        where qiyebianhao=#{qiyebianhao}
+    </update>
+
+    <update id="updateSelf" parameterType="LZhaopinxinxi">
+        update zhaopinxinxi
+        <set>
+            <if test="zhaopingangwei !=null">zhaopingangwei=#{zhaopingangwei},</if>
+            <if test="zhaopinrenshu !=null">zhaopinrenshu=#{zhaopinrenshu},</if>
+            <if test="gangweileibie !=null">gangweileibie=#{gangweileibie},</if>
+            <if test="xueli !=null">xueli=#{xueli},</if>
+            <if test="tupian !=null">tupian=#{tupian},</if>
+            <if test="gangweiyaoqiu !=null">gangweiyaoqiu=#{gangweiyaoqiu},</if>
+            <if test="gongzuozhize !=null">gongzuozhize=#{gongzuozhize},</if>
+        </set>
+        where id =#{id}
+    </update>
+
+    <update id="dianzhan">
+        update zhaopinxinxi
+        set thumbsupnum=#{i}
+        where id = #{id}
+    </update>
+    <update id="diancai">
+        update zhaopinxinxi
+        set crazilynum=#{i}
+        where id = #{id}
+    </update>
+</mapper>

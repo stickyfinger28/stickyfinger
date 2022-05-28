@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo.mapper.QiyexinxiMapper">
+
+
+    <select id="selectAll" resultType="Qiyexinxi">
+        select id, addtime, qiyebianhao,qiyemingcheng, fuzeren, lianxidianhua, qiyeyouxiang, qiyejieshao from qiyexinxi where qiyexinxi.del=0;
+    </select>
+
+
+    <update id="updateSelf" parameterType="LQiyexinxi">
+        update qiyexinxi
+        <set>
+            <if test="qiyebianhao !=null">qiyebianhao=#{qiyebianhao},</if>
+            <if test="fuzeren !=null">fuzeren=#{fuzeren},</if>
+            <if test="mima !=null">mima=#{mima},</if>
+            <if test="qiyejieshao !=null">qiyejieshao=#{qiyejieshao},</if>
+            <if test="qiyemingcheng !=null">qiyemingcheng=#{qiyemingcheng},</if>
+            <if test="qiyeyouxiang !=null">qiyeyouxiang=#{qiyeyouxiang},</if>
+        </set>
+        where qiyebianhao =#{uqiyebianhao}
+
+    </update>
+
+    <insert id="setBoss">
+        insert into yonghu_role(yonghu_id, role_id) VALUES(#{id},3);
+    </insert>
+</mapper>

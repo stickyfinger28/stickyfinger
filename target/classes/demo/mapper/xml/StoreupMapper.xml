@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo.mapper.StoreupMapper">
+
+    <resultMap id="Self" type="Storeup">
+        <id column="id" property="id"/>
+        <result property="addtime" column="addtime"/>
+        <result property="name" column="name"/>
+        <result property="refid" column="refid"/>
+        <result property="picture" column="picture"/>
+        <collection property="news" ofType="News">
+            <id column="n.id" property="id"/>
+            <result column="title" property="title"/>
+            <result column="addtime" property="addtime"/>
+            <result column="picture" property="picture"/>
+            <result column="content" property="content"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectSelf" resultMap="Self">
+        SELECT s.id, s.`addtime`,s.name,s.refid,s.`picture`,n.id,n.addtime,n.`title`,n.`picture`,n.`content`
+        FROM storeup s
+                 LEFT JOIN news n ON n.id = s.refid
+                 LEFT JOIN yonghu Y ON Y.id = s.userid
+        WHERE Y.id = #{yonghuId} and s.del=0;
+    </select>
+
+    <select id="check" resultMap="Self">
+        SELECT s.id
+        FROM storeup s
+                 LEFT JOIN news n ON n.id = s.refid
+                 LEFT JOIN yonghu Y ON Y.id = s.userid
+        WHERE Y.id = #{yonghuId} and s.id=#{id} and s.del=0;
+    </select>
+
+</mapper>

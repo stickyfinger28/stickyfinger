@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo.mapper.QiuzhizhexinxiMapper">
+
+    <resultMap id="Self" type="Qiuzhizhexinxi">
+        <id column="id" property="id"/>
+        <result column="yonghuming" property="yonghuming"/>
+        <result column="addtime" property="addtime"/>
+        <result column="xingming" property="xingming"/>
+        <result column="xingbie" property="xingbie"/>
+        <result column="dianhua" property="dianhua"/>
+        <result column="zhaopian" property="zhaopian"/>
+        <result column="xueli" property="xueli"/>
+        <result column="gangweileibie" property="gangweileibie"/>
+        <result column="jianli" property="jianli"/>
+        <result column="gongzuojingli" property="gongzuojingli"/>
+        <result column="gerenjibenqingkuang" property="gerenjibenqingkuang"/>
+        <result column="thumbsupnum" property="thumbsupnum"/>
+        <result column="crazilynum" property="crazilynum"/>
+        <collection property="discussqiuzhizhexinxiList" ofType="Discussqiuzhizhexinxi">
+            <id column="d_id" property="d_id"/>
+            <result column="content" property="content"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="selectSelf" resultMap="Self">
+        select q.id,
+               q.addtime,
+               q.yonghuming,
+               q.xingming,
+               q.xingbie,
+               q.dianhua,
+               q.zhaopian,
+               q.xueli,
+               q.gangweileibie,
+               q.jianli,
+               q.gongzuojingli,
+               q.gerenjibenqingkuang,
+               q.thumbsupnum,
+               q.crazilynum,
+               q.del,
+               d.d_id,
+               d.addtime,
+               d.refid,
+               d.content
+        from qiuzhizhexinxi q
+                 left join discussqiuzhizhexinxi d on q.id = d.refid
+                 left join yonghu y on y.yonghuming = q.yonghuming
+        where y.yonghuming = #{yonghuming}
+          and q.del = 0;
+    </select>
+
+    <select id="check" resultMap="Self">
+        select q.id
+        from qiuzhizhexinxi q
+                 left join yonghu y on y.yonghuming = q.yonghuming
+        where y.yonghuming = #{yonghuming}
+          and q.del = 0
+          and q.id = #{id};
+    </select>
+
+    <update id="updateByYonghu" parameterType="Yonghu">
+        update qiuzhizhexinxi
+        <set>
+            <if test="dianhua !=null">dianhua=#{dianhua},</if>
+            <if test="xingbie !=null">xingbie=#{xingbie},</if>
+            <if test="xingming !=null">xingming=#{xingming},</if>
+        </set>
+        where yonghuming=#{yonghuming};
+    </update>
+
+    <update id="updateSelf" parameterType="LQiuzhizhexinxi">
+        update qiuzhizhexinxi
+        <set>
+            <if test="zhaopian !=null">zhaopian=#{zhaopian},</if>
+            <if test="gangweileibie !=null">gangweileibie=#{gangweileibie},</if>
+            <if test="jianli !=null">jianli=#{jianli},</if>
+            <if test="gongzuojingli !=null">gongzuojingli=#{gongzuojingli},</if>
+            <if test="gerenjibenqingkuang !=null">gerenjibenqingkuang=#{gerenjibenqingkuang},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <insert id="setStaff">
+        insert into yonghu_role(yonghu_id, role_id)
+        VALUES (#{id}, 2);
+    </insert>
+
+    <update id="dianzhan">
+        update qiuzhizhexinxi
+        set thumbsupnum=#{i}
+        where id = #{id}
+    </update>
+    <update id="diancai">
+        update qiuzhizhexinxi
+        set crazilynum=#{i}
+        where id = #{id}
+    </update>
+</mapper>
